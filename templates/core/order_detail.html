@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Orden {{ object.order_number }} · RV Gráfica{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Orden de producción #{{ object.order_number }}</h1>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-secondary" onclick="window.print(); return false;">
+      <i class="bi bi-printer"></i> Imprimir / PDF
+    </button>
+    {% if can_edit %}
+      <a class="btn btn-primary" href="{% url 'order_update' object.pk %}"><i class="bi bi-pencil"></i> Editar</a>
+    {% endif %}
+  </div>
+</div>
+<div class="order-sheet shadow-sm">
+  <div class="order-sheet__header">
+    <div>
+      <h2 class="mb-1">ORDEN DE PEDIDO</h2>
+      <p class="mb-0">Gráfica RV · Autoadhesiva y cartelería</p>
+    </div>
+    <div class="order-sheet__meta">
+      <div><span class="label">N°</span> <span class="value">{{ object.order_number }}</span></div>
+      <div class="text-end">
+        <span class="label">Fecha</span>
+        <span class="value">{{ object.order_date|date:"d/m/Y" }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="order-sheet__info">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <p class="text-muted mb-1">Cliente</p>
+        <p class="fw-semibold mb-0">{{ object.client.name }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted mb-1">Empresa / Línea</p>
+        <p class="mb-0">{{ object.service_line|default:"—" }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted mb-1">Estado</p>
+        {% if object.status == object.STATUS_PENDING %}
+          <span class="badge bg-warning text-dark">Pendiente</span>
+        {% elif object.status == object.STATUS_IN_PROGRESS %}
+          <span class="badge bg-info text-dark">En curso</span>
+        {% else %}
+          <span class="badge bg-success">Finalizada</span>
+        {% endif %}
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted mb-1">Interno</p>
+        <p class="mb-0">{{ object.internal_code|default:"—" }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted mb-1">Carrocería</p>
+        <p class="mb-0">{{ object.bodywork|default:"—" }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted mb-1">Contacto</p>
+        <p class="mb-0">{{ object.contact_name|default:"—" }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted mb-1">Mail</p>
+        <p class="mb-0">{{ object.email|default:"—" }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-muted mb-1">Teléfono</p>
+        <p class="mb-0">{{ object.phone|default:"—" }}</p>
+      </div>
+      <div class="col-12">
+        <p class="text-muted mb-1">Observaciones</p>
+        <p class="mb-0">{{ object.notes|default:"—" }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="order-sheet__table table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Descripción del trabajo</th>
+          <th>Detalle</th>
+          <th>Colores</th>
+          <th>Medida</th>
+          <th>Cant.</th>
+          <th>Precio</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+          <tr>
+            <td class="work-label">{{ item.get_preset_label_display }}</td>
+            <td>{{ item.detail|default:"" }}</td>
+            <td>{{ item.colors|default:"" }}</td>
+            <td>{{ item.measure|default:"" }}</td>
+            <td class="w-10">{{ item.quantity|default:"" }}</td>
+            <td class="w-10">{{ item.unit_price|default:"" }}</td>
+            <td class="w-10">{{ item.total_amount|default:"" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="mt-4 row g-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Registro fotográfico</h2>
+        {% if can_upload %}
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if photo_form.non_field_errors %}
+              <div class="alert alert-danger">{{ photo_form.non_field_errors }}</div>
+            {% endif %}
+            <div class="mb-3">
+              <label class="form-label">Foto</label>
+              {{ photo_form.image }}
+              {{ photo_form.image.errors }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Descripción</label>
+              {{ photo_form.description }}
+              {{ photo_form.description.errors }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Materiales utilizados</label>
+              {{ photo_form.materials }}
+              {{ photo_form.materials.errors }}
+            </div>
+            <button class="btn btn-primary" type="submit">Subir foto</button>
+          </form>
+        {% else %}
+          <p class="text-muted">No tenés permisos para subir imágenes.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Fotos cargadas</h2>
+        {% if photos %}
+          <div class="photo-grid">
+            {% for photo in photos %}
+              <div class="photo-card">
+                <img src="{{ photo.image.url }}" alt="Foto orden {{ object.order_number }}" class="img-fluid rounded mb-2" />
+                {% if photo.description %}<p class="small mb-1">{{ photo.description }}</p>{% endif %}
+                {% if photo.materials.all %}
+                  <p class="small text-muted mb-1">Materiales: {{ photo.materials.all|join:", " }}</p>
+                {% endif %}
+                <p class="small text-muted mb-0">Subido por {{ photo.uploaded_by|default:"Equipo RV" }} el {{ photo.created_at|date:"d/m/Y H:i" }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-muted mb-0">Aún no se cargaron fotos para esta orden.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Nueva factura · RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Cargar factura</h1>
+<form method="post" class="card shadow-sm border-0 p-4">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Tipo</label>
+      {{ form.invoice_type }}
+      {{ form.invoice_type.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Número</label>
+      {{ form.number }}
+      {{ form.number.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Fecha</label>
+      {{ form.date }}
+      {{ form.date.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Cliente</label>
+      {{ form.client }}
+      {{ form.client.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Proveedor</label>
+      {{ form.supplier }}
+      {{ form.supplier.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Orden relacionada</label>
+      {{ form.order }}
+      {{ form.order.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Monto</label>
+      {{ form.amount }}
+      {{ form.amount.errors }}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Descripción</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <a class="btn btn-outline-secondary" href="{% url 'invoice_list' %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}

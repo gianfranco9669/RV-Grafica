@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Registrar gasto · RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Registrar gasto</h1>
+<form method="post" class="card shadow-sm border-0 p-4">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Categoría</label>
+      {{ form.category }}
+      {{ form.category.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Fecha</label>
+      {{ form.date }}
+      {{ form.date.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Monto</label>
+      {{ form.amount }}
+      {{ form.amount.errors }}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Descripción</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <a class="btn btn-outline-secondary" href="{% url 'expense_list' %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}
