@@ -71,7 +71,8 @@ class ProductionOrderForm(forms.ModelForm):
             "notes",
         ]
         widgets = {
-            "client": _widget_with_class(forms.Select()),
+            # id="id_client" es el default, lo dejamos explícito para el buscador JS
+            "client": _widget_with_class(forms.Select(attrs={"id": "id_client"})),
             "order_date": _widget_with_class(forms.DateInput(attrs={"type": "date"})),
             "service_line": _widget_with_class(forms.TextInput()),
             "internal_code": _widget_with_class(forms.TextInput()),
@@ -83,19 +84,34 @@ class ProductionOrderForm(forms.ModelForm):
             "notes": _widget_with_class(forms.Textarea(attrs={"rows": 3})),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Que sólo sea obligatoria la fecha
+        for name in self.fields:
+            self.fields[name].required = (name == "order_date")
+
 
 class OrderItemForm(forms.Form):
     preset_key = forms.CharField(widget=forms.HiddenInput())
-    preset_name = forms.CharField(label="Descripción", required=False, disabled=True)
-    detail = forms.CharField(label="Detalle", required=False)
-    colors = forms.CharField(label="Colores", required=False)
-    measure = forms.CharField(label="Medida", required=False)
+
+    # AHORA EDITABLE
+    preset_name = forms.CharField(
+        label="Descripción del trabajo",
+        required=False,
+        widget=_widget_with_class(
+            forms.TextInput(attrs={"placeholder": "Ej.: Ploteo lateral completo"})
+        ),
+    )
+    detail = forms.CharField(label="Detalle", required=False, widget=_widget_with_class(forms.TextInput()))
+    colors = forms.CharField(label="Colores", required=False, widget=_widget_with_class(forms.TextInput()))
+    measure = forms.CharField(label="Medida", required=False, widget=_widget_with_class(forms.TextInput()))
     quantity = forms.DecimalField(
         label="Cant.",
         required=False,
         max_digits=10,
         decimal_places=2,
         min_value=Decimal("0"),
+        widget=_widget_with_class(forms.NumberInput(attrs={"step": "0.01"})),
     )
     unit_price = forms.DecimalField(
         label="Precio",
@@ -103,6 +119,7 @@ class OrderItemForm(forms.Form):
         max_digits=10,
         decimal_places=2,
         min_value=Decimal("0"),
+        widget=_widget_with_class(forms.NumberInput(attrs={"step": "0.01"})),
     )
     total_amount = forms.DecimalField(
         label="Total",
@@ -110,16 +127,17 @@ class OrderItemForm(forms.Form):
         max_digits=12,
         decimal_places=2,
         min_value=Decimal("0"),
+        widget=_widget_with_class(forms.NumberInput(attrs={"step": "0.01"})),
     )
 
     def clean(self) -> dict[str, object]:
-        cleaned_data = super().clean()
-        quantity = cleaned_data.get("quantity")
-        unit_price = cleaned_data.get("unit_price")
-        total_amount = cleaned_data.get("total_amount")
-        if total_amount is None and quantity is not None and unit_price is not None:
-            cleaned_data["total_amount"] = (quantity * unit_price).quantize(Decimal("0.01"))
-        return cleaned_data
+        cleaned = super().clean()
+        q = cleaned.get("quantity")
+        p = cleaned.get("unit_price")
+        t = cleaned.get("total_amount")
+        if t is None and q is not None and p is not None:
+            cleaned["total_amount"] = (q * p).quantize(Decimal("0.01"))
+        return cleaned
 
 
 OrderItemFormSet = formset_factory(OrderItemForm, extra=0)
@@ -173,15 +191,15 @@ class InvoiceForm(forms.ModelForm):
         }
 
     def clean(self) -> dict[str, object]:
-        cleaned_data = super().clean()
-        invoice_type = cleaned_data.get("invoice_type")
-        client = cleaned_data.get("client")
-        supplier = cleaned_data.get("supplier")
+        cleaned = super().clean()
+        invoice_type = cleaned.get("invoice_type")
+        client = cleaned.get("client")
+        supplier = cleaned.get("supplier")
         if invoice_type == Invoice.TYPE_SALE and not client:
             self.add_error("client", "Seleccioná un cliente para la factura de venta.")
         if invoice_type == Invoice.TYPE_PURCHASE and not supplier:
             self.add_error("supplier", "Seleccioná un proveedor para la factura de compra.")
-        return cleaned_data
+        return cleaned
 
 
 class ExpenseForm(forms.ModelForm):
@@ -220,12 +238,8 @@ class OrderPhotoForm(forms.Form):
 def update_order_item_formset_labels(formset: Iterable[OrderItemForm]) -> None:
     label_map = {key: label for key, label in ORDER_ITEM_PRESETS}
     for form in formset:
-        preset_key = form.initial.get("preset_key") or form.data.get(form.add_prefix("preset_key"))
-        if preset_key:
-            form.fields["preset_name"].initial = label_map.get(preset_key, "")
-        form.fields["detail"].widget = _widget_with_class(forms.TextInput())
-        form.fields["colors"].widget = _widget_with_class(forms.TextInput())
-        form.fields["measure"].widget = _widget_with_class(forms.TextInput())
-        form.fields["quantity"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))
-        form.fields["unit_price"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))
-        form.fields["total_amount"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))
+        # Si no está “bound” (GET inicial), precarga el label como sugerencia editable
+        if not form.is_bound:
+            preset_key = form.initial.get("preset_key")
+            if preset_key:
+                form.fields["preset_name"].initial = label_map.get(preset_key, "")

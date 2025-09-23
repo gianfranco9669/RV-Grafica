@@ -103,7 +103,8 @@ class ProductionOrder(TimeStampedModel):
     ]
 
     order_number = models.PositiveIntegerField(unique=True, editable=False)
-    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="orders")
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="orders",null=True,
+    blank=True,)
     order_date = models.DateField(default=date.today)
     service_line = models.CharField("Empresa / línea", max_length=255, blank=True)
     internal_code = models.CharField("Interno", max_length=100, blank=True)

@@ -35,23 +35,23 @@
           <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name in ['order_list', 'order_detail', 'order_create', 'order_update'] %}active{% endif %}" href="{% url 'order_list' %}">
+                <a class="nav-link {% if request.resolver_match.url_name == 'order_list' or request.resolver_match.url_name == 'order_detail' or request.resolver_match.url_name == 'order_create' or request.resolver_match.url_name == 'order_update' %}active{% endif %}" href="{% url 'order_list' %}">
                   <i class="bi bi-kanban"></i> Órdenes de producción
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name in ['budget_list', 'budget_create', 'budget_update'] %}active{% endif %}" href="{% url 'budget_list' %}">
+                <a class="nav-link {% if request.resolver_match.url_name == 'budget_list' or request.resolver_match.url_name == 'budget_create' or request.resolver_match.url_name == 'budget_update' %}active{% endif %}" href="{% url 'budget_list' %}">
                   <i class="bi bi-calculator"></i> Presupuestos
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name in ['invoice_list', 'invoice_create', 'expense_list', 'expense_create'] %}active{% endif %}" href="{% url 'invoice_list' %}">
+                <a class="nav-link {% if request.resolver_match.url_name == 'invoice_list' or request.resolver_match.url_name == 'invoice_create' or request.resolver_match.url_name == 'expense_list' or request.resolver_match.url_name == 'expense_create' %}active{% endif %}" href="{% url 'invoice_list' %}">
                   <i class="bi bi-receipt"></i> Facturación
                 </a>
               </li>
               <li class="nav-item dropdown">
                 <a
-                  class="nav-link dropdown-toggle {% if request.resolver_match.url_name in ['client_list', 'client_create', 'client_update', 'supplier_list', 'supplier_create', 'supplier_update'] %}active{% endif %}"
+                  class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'client_list' or request.resolver_match.url_name == 'client_create' or request.resolver_match.url_name == 'client_update' or request.resolver_match.url_name == 'supplier_list' or request.resolver_match.url_name == 'supplier_create' or request.resolver_match.url_name == 'supplier_update' %}active{% endif %}"
                   href="#"
                   role="button"
                   data-bs-toggle="dropdown"
