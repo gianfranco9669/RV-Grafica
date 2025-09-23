@@ -8,7 +8,6 @@
   {% if form.non_field_errors %}
     <div class="alert alert-danger">{{ form.non_field_errors }}</div>
   {% endif %}
-
   <div class="order-sheet shadow-sm">
     <div class="order-sheet__header">
       <div>
@@ -16,33 +15,21 @@
         <p class="mb-0">Gráfica RV · Autoadhesiva y cartelería</p>
       </div>
       <div class="order-sheet__meta">
-        <div>
-          <span class="label">N°</span>
-          <span class="value">
-            {% if is_edit %}{{ order.order_number }}{% else %}{{ next_order_number }}{% endif %}
-          </span>
-        </div>
+        <div><span class="label">N°</span> <span class="value">{% if is_edit %}{{ order.order_number }}{% else %}—{% endif %}</span></div>
         <div class="text-end">
-          <label class="label" for="id_order_date">Fecha <span class="text-danger">*</span></label>
+          <label class="label" for="id_order_date">Fecha</label>
           {{ form.order_date }}
-          {% for e in form.order_date.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.order_date.errors }}
         </div>
       </div>
     </div>
-
     <div class="order-sheet__info">
       <div class="row g-3">
         <div class="col-md-6">
           <label class="form-label">Cliente</label>
-
-          <!-- Buscador -->
-          <input type="text" class="form-control mb-2" id="clientSearch" placeholder="Buscar cliente por nombre..." autocomplete="off" />
-
-          <!-- Select real -->
           {{ form.client }}
-          {% for e in form.client.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.client.errors }}
         </div>
-
         <div class="col-md-6">
           <label class="form-label">Estado</label>
           {% if is_edit %}
@@ -51,49 +38,45 @@
             <input class="form-control" value="Pendiente" disabled />
             <input type="hidden" name="status" value="{{ default_status }}" />
           {% endif %}
-          {% for e in form.status.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.status.errors }}
         </div>
-
         <div class="col-md-4">
           <label class="form-label">Empresa / Línea</label>
           {{ form.service_line }}
-          {% for e in form.service_line.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.service_line.errors }}
         </div>
         <div class="col-md-4">
           <label class="form-label">Interno</label>
           {{ form.internal_code }}
-          {% for e in form.internal_code.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.internal_code.errors }}
         </div>
         <div class="col-md-4">
           <label class="form-label">Carrocería</label>
           {{ form.bodywork }}
-          {% for e in form.bodywork.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.bodywork.errors }}
         </div>
-
         <div class="col-md-4">
           <label class="form-label">Nombre y apellido</label>
           {{ form.contact_name }}
-          {% for e in form.contact_name.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.contact_name.errors }}
         </div>
         <div class="col-md-4">
           <label class="form-label">Mail</label>
           {{ form.email }}
-          {% for e in form.email.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.email.errors }}
         </div>
         <div class="col-md-4">
           <label class="form-label">Teléfono</label>
           {{ form.phone }}
-          {% for e in form.phone.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.phone.errors }}
         </div>
-
         <div class="col-12">
           <label class="form-label">Observaciones</label>
           {{ form.notes }}
-          {% for e in form.notes.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          {{ form.notes.errors }}
         </div>
       </div>
     </div>
-
     <div class="order-sheet__table table-responsive">
       <table class="table table-bordered">
         <thead>
@@ -116,72 +99,34 @@
           {% for item_form in formset %}
             <tr>
               <td class="work-label">
-                {{ item_form.preset_key }} <!-- hidden -->
+                {{ item_form.preset_key }}
                 {{ item_form.preset_name }}
-                {% for e in item_form.preset_name.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                {{ item_form.preset_name.errors }}
               </td>
-              <td>
-                {{ item_form.detail }}
-                {% for e in item_form.detail.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
-              </td>
-              <td>
-                {{ item_form.colors }}
-                {% for e in item_form.colors.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
-              </td>
-              <td>
-                {{ item_form.measure }}
-                {% for e in item_form.measure.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
-              </td>
-              <td class="w-10">
-                {{ item_form.quantity }}
-                {% for e in item_form.quantity.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
-              </td>
-              <td class="w-10">
-                {{ item_form.unit_price }}
-                {% for e in item_form.unit_price.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
-              </td>
-              <td class="w-10">
-                {{ item_form.total_amount }}
-                {% for e in item_form.total_amount.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
-              </td>
+              <td>{{ item_form.detail }}</td>
+              <td>{{ item_form.colors }}</td>
+              <td>{{ item_form.measure }}</td>
+              <td class="w-10">{{ item_form.quantity }}</td>
+              <td class="w-10">{{ item_form.unit_price }}</td>
+              <td class="w-10">{{ item_form.total_amount }}</td>
             </tr>
+            {% if item_form.errors %}
+              <tr class="table-danger">
+                <td colspan="7">
+                  {% for field, error_list in item_form.errors.items %}
+                    <div>{{ error_list|join:", " }}</div>
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endif %}
           {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
-
   <div class="text-end mt-4">
     <a class="btn btn-outline-secondary" href="{% if is_edit %}{% url 'order_detail' order.pk %}{% else %}{% url 'order_list' %}{% endif %}">Cancelar</a>
     <button class="btn btn-primary" type="submit">Guardar</button>
   </div>
 </form>
-
-<!-- Buscador por tipeo para el select de clientes -->
-<script>
-  (function () {
-    const input = document.getElementById('clientSearch');
-    const select = document.getElementById('id_client');
-    if (!input || !select) return;
-
-    const allOptions = Array.from(select.options).map(o => ({value: o.value, text: o.text}));
-
-    function renderOptions(filter) {
-      const lower = (filter || '').trim().toLowerCase();
-      const current = select.value;
-      while (select.options.length) select.remove(0);
-      const filtered = !lower ? allOptions : allOptions.filter(o => o.text.toLowerCase().includes(lower));
-      filtered.forEach(o => {
-        const opt = document.createElement('option');
-        opt.value = o.value;
-        opt.text = o.text;
-        select.add(opt);
-      });
-      if (filtered.some(o => o.value === current)) select.value = current;
-    }
-
-    input.addEventListener('input', () => renderOptions(input.value));
-    renderOptions('');
-  })();
-</script>
 {% endblock %}

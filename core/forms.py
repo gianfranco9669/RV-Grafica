@@ -84,27 +84,13 @@ class ProductionOrderForm(forms.ModelForm):
             "notes": _widget_with_class(forms.Textarea(attrs={"rows": 3})),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Que sólo sea obligatoria la fecha
-        for name in self.fields:
-            self.fields[name].required = (name == "order_date")
-
 
 class OrderItemForm(forms.Form):
     preset_key = forms.CharField(widget=forms.HiddenInput())
-
-    # AHORA EDITABLE
-    preset_name = forms.CharField(
-        label="Descripción del trabajo",
-        required=False,
-        widget=_widget_with_class(
-            forms.TextInput(attrs={"placeholder": "Ej.: Ploteo lateral completo"})
-        ),
-    )
-    detail = forms.CharField(label="Detalle", required=False, widget=_widget_with_class(forms.TextInput()))
-    colors = forms.CharField(label="Colores", required=False, widget=_widget_with_class(forms.TextInput()))
-    measure = forms.CharField(label="Medida", required=False, widget=_widget_with_class(forms.TextInput()))
+    preset_name = forms.CharField(label="Descripción", required=False, disabled=True)
+    detail = forms.CharField(label="Detalle", required=False)
+    colors = forms.CharField(label="Colores", required=False)
+    measure = forms.CharField(label="Medida", required=False)
     quantity = forms.DecimalField(
         label="Cant.",
         required=False,
@@ -238,8 +224,12 @@ class OrderPhotoForm(forms.Form):
 def update_order_item_formset_labels(formset: Iterable[OrderItemForm]) -> None:
     label_map = {key: label for key, label in ORDER_ITEM_PRESETS}
     for form in formset:
-        # Si no está “bound” (GET inicial), precarga el label como sugerencia editable
-        if not form.is_bound:
-            preset_key = form.initial.get("preset_key")
-            if preset_key:
-                form.fields["preset_name"].initial = label_map.get(preset_key, "")
+        preset_key = form.initial.get("preset_key") or form.data.get(form.add_prefix("preset_key"))
+        if preset_key:
+            form.fields["preset_name"].initial = label_map.get(preset_key, "")
+        form.fields["detail"].widget = _widget_with_class(forms.TextInput())
+        form.fields["colors"].widget = _widget_with_class(forms.TextInput())
+        form.fields["measure"].widget = _widget_with_class(forms.TextInput())
+        form.fields["quantity"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))
+        form.fields["unit_price"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))
+        form.fields["total_amount"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))

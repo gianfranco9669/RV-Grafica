@@ -30,7 +30,7 @@
     <div class="row g-3">
       <div class="col-md-4">
         <p class="text-muted mb-1">Cliente</p>
-        <p class="fw-semibold mb-0">{{ object.client.name }}</p>
+        <p class="fw-semibold mb-0">{% if object.client %}{{ object.client.name }}{% else %}—{% endif %}</p>
       </div>
       <div class="col-md-4">
         <p class="text-muted mb-1">Empresa / Línea</p>
@@ -88,7 +88,7 @@
       <tbody>
         {% for item in items %}
           <tr>
-            <td class="work-label">{{ item.get_preset_label_display }}</td>
+            <td class="work-label">{{ item.custom_description|default:item.get_preset_label_display }}</td>
             <td>{{ item.detail|default:"" }}</td>
             <td>{{ item.colors|default:"" }}</td>
             <td>{{ item.measure|default:"" }}</td>

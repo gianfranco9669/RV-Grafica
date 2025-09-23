@@ -3,12 +3,10 @@ from __future__ import annotations
 from typing import Iterable
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import models
-from django.db.models import Max  # <- añadido para next_order_number
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
-from django.shortcuts import redirect, render
-from django.views import View
+from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, TemplateView
 
 from .forms import (
@@ -37,10 +35,6 @@ from .models import (
 )
 
 
-# ---------------------------
-# Mixins de rol/permisos
-# ---------------------------
-
 class RoleRequiredMixin(UserPassesTestMixin):
     allowed_roles: set[str] = set()
 
@@ -67,10 +61,6 @@ class AdminOnlyMixin(LoginRequiredMixin, RoleRequiredMixin):
     allowed_roles = {UserProfile.ROLE_ADMIN}
 
 
-# ---------------------------
-# Dashboard
-# ---------------------------
-
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "core/dashboard.html"
 
@@ -85,113 +75,55 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         expenses = Expense.objects.aggregate(total=models.Sum("amount"))
         context["expense_total"] = expenses.get("total") or 0
         profile = getattr(self.request.user, "profile", None)
-        context["can_manage_orders"] = self.request.user.is_superuser or (profile and profile.is_administrative)
+        context["can_manage_orders"] = self.request.user.is_superuser or (
+            profile and profile.is_administrative
+        )
         return context
 
 
-# ---------------------------
-# Utilidades de órdenes
-# ---------------------------
-
-def _get_next_order_number() -> int:
-    """
-    Devuelve el próximo número de orden para mostrar en 'Nueva orden'.
-    (El modelo igual autoasigna al guardar si está vacío.)
-    """
-    max_number = ProductionOrder.objects.aggregate(Max("order_number"))["order_number__max"] or 0
-    return max_number + 1
-
-
-def _iter_items_from_source(source) -> list:
-    """
-    Dado un 'source' que puede ser un Budget o una ProductionOrder (o None),
-    intenta devolver una lista de items relacionados (source.items.all()).
-    Retorna [] si no hay relación o si algo falla.
-    """
-    if not source:
-        return []
-    rel = getattr(source, "items", None)
-    if not rel:
-        return []
-    try:
-        return list(rel.all())
-    except Exception:
-        return []
-
-
-def build_order_item_initial(source=None) -> list[dict]:
-    """
-    Devuelve filas iniciales para el formset de ítems de orden.
-    - Si 'source' (Budget/ProductionOrder) tiene items, copia sus campos.
-    - Si no hay nada, devuelve 1 fila en blanco.
-    Se alinea con OrderItemForm: preset_key, preset_name, detail, colors, measure, quantity, unit_price, total_amount.
-    """
-    rows: list[dict] = []
-
-    for it in _iter_items_from_source(source):
-        if not it:
-            continue
-        rows.append({
-            "preset_key": getattr(it, "preset_label", getattr(it, "preset_key", "")) or "",
-            # preset_name = texto visible/EDITABLE de “Descripción del trabajo”
-            "preset_name": getattr(it, "description", getattr(it, "detail", "")) or "",
-            "detail": getattr(it, "detail", getattr(it, "description", "")) or "",
-            "colors": getattr(it, "colors", "") or "",
-            "measure": getattr(it, "measure", "") or "",
-            "quantity": getattr(it, "quantity", 1) or 1,
-            "unit_price": getattr(it, "unit_price", 0) or 0,
-            "total_amount": getattr(it, "total_amount", 0) or 0,
-        })
-
-    if not rows:
-        rows = [{
-            "preset_key": "",
-            "preset_name": "",
-            "detail": "",
-            "colors": "",
-            "measure": "",
-            "quantity": 1,
-            "unit_price": "",
-            "total_amount": "",
-        }]
-
-    return rows
+def build_order_item_initial(order: ProductionOrder | None = None) -> list[dict[str, object]]:
+    items_map = {}
+    if order is not None:
+        items_map = {item.preset_label: item for item in order.items.all()}
+    initial: list[dict[str, object]] = []
+    for key, label in ORDER_ITEM_PRESETS:
+        item = items_map.get(key)
+        initial.append(
+            {
+                "preset_key": key,
+                "preset_name": (item.custom_description if item and item.custom_description else label),
+                "detail": item.detail if item else "",
+                "colors": item.colors if item else "",
+                "measure": item.measure if item else "",
+                "quantity": item.quantity,
+                "unit_price": item.unit_price,
+                "total_amount": item.total_amount,
+            }
+        )
+    return initial
 
 
 def save_order_items(order: ProductionOrder, formset: Iterable[OrderItemForm]) -> None:
-    """
-    Guarda/actualiza los ítems de la orden a partir del formset.
-    Usa preset_key como llave lógica (compatible con ORDER_ITEM_PRESETS).
-    """
     for form in formset:
-        if not getattr(form, "cleaned_data", None):
+        if not form.cleaned_data:
             continue
-        if form.cleaned_data.get("DELETE"):
-            continue
-
         preset_key = form.cleaned_data.get("preset_key")
         if not preset_key:
-            # Si querés permitir líneas sin preset, cambiá a create() y guarda preset_label vacío.
             continue
-
         ProductionOrderItem.objects.update_or_create(
             order=order,
             preset_label=preset_key,
             defaults={
-                # Si no hay 'detail', usa lo que el usuario escribió en 'preset_name'
-                "detail": form.cleaned_data.get("detail", "") or form.cleaned_data.get("preset_name", ""),
+                "custom_description": form.cleaned_data.get("preset_name", ""),
+                "detail": form.cleaned_data.get("detail", ""),
                 "colors": form.cleaned_data.get("colors", ""),
                 "measure": form.cleaned_data.get("measure", ""),
-                "quantity": form.cleaned_data.get("quantity") or 1,
-                "unit_price": form.cleaned_data.get("unit_price") or 0,
-                "total_amount": form.cleaned_data.get("total_amount") or 0,
+                "quantity": form.cleaned_data.get("quantity"),
+                "unit_price": form.cleaned_data.get("unit_price"),
+                "total_amount": form.cleaned_data.get("total_amount"),
             },
         )
 
-
-# ---------------------------
-# Órdenes
-# ---------------------------
 
 class ProductionOrderListView(LoginRequiredMixin, ListView):
     template_name = "core/order_list.html"
@@ -205,10 +137,7 @@ class ProductionOrderListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(status=status)
         search = self.request.GET.get("q")
         if search:
-            queryset = queryset.filter(
-                models.Q(client__name__icontains=search) |
-                models.Q(order_number__icontains=search)
-            )
+            queryset = queryset.filter(models.Q(client__name__icontains=search) | models.Q(order_number__icontains=search))
         return queryset.order_by("-order_date", "-order_number")
 
     def get_context_data(self, **kwargs):
@@ -216,33 +145,24 @@ class ProductionOrderListView(LoginRequiredMixin, ListView):
         context["status"] = self.request.GET.get("estado", "")
         context["search"] = self.request.GET.get("q", "")
         profile = getattr(self.request.user, "profile", None)
-        context["can_manage_orders"] = self.request.user.is_superuser or (profile and profile.is_administrative)
+        context["can_manage_orders"] = self.request.user.is_superuser or (
+            profile and profile.is_administrative
+        )
         return context
 
 
 class ProductionOrderCreateView(AdministrativeRequiredMixin, TemplateView):
-    """
-    Create con form principal y formset de ítems.
-    Soporta prellenado opcional desde presupuesto: /ordenes/nueva/?preset_budget=ID
-    """
     template_name = "core/order_form.html"
 
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        # Intento de preset por presupuesto
-        preset = None
-        preset_id = request.GET.get("preset_budget")
-        if preset_id:
-            preset = Budget.objects.filter(pk=preset_id).first()
-
         form = ProductionOrderForm(initial={"status": ProductionOrder.STATUS_PENDING})
-        formset = OrderItemFormSet(initial=build_order_item_initial(preset))
+        formset = OrderItemFormSet(initial=build_order_item_initial())
         update_order_item_formset_labels(formset)
         context = {
             "form": form,
             "formset": formset,
             "is_edit": False,
             "default_status": ProductionOrder.STATUS_PENDING,
-            "next_order_number": _get_next_order_number(),  # <- mostrar N° próximo en la UI
         }
         return self.render_to_response(context)
 
@@ -252,7 +172,6 @@ class ProductionOrderCreateView(AdministrativeRequiredMixin, TemplateView):
         update_order_item_formset_labels(formset)
         if form.is_valid() and formset.is_valid():
             order = form.save(commit=False)
-            # El modelo autoasigna order_number si está vacío
             order.created_by = request.user
             order.save()
             save_order_items(order, formset)
@@ -264,7 +183,6 @@ class ProductionOrderCreateView(AdministrativeRequiredMixin, TemplateView):
             "formset": formset,
             "is_edit": False,
             "default_status": ProductionOrder.STATUS_PENDING,
-            "next_order_number": _get_next_order_number(),  # volver a mostrarlo en caso de error
         }
         return self.render_to_response(context)
 
@@ -278,9 +196,7 @@ class ProductionOrderUpdateView(AdministrativeRequiredMixin, TemplateView):
 
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         form = ProductionOrderForm(instance=self.order)
-        # Prellenar desde los ítems existentes de la orden
-        initial_rows = build_order_item_initial(self.order)
-        formset = OrderItemFormSet(initial=initial_rows)
+        formset = OrderItemFormSet(initial=build_order_item_initial(self.order))
         update_order_item_formset_labels(formset)
         context = {
             "form": form,
@@ -333,7 +249,9 @@ class ProductionOrderDetailView(LoginRequiredMixin, DetailView):
         photo_form = kwargs.get("photo_form") or OrderPhotoForm()
         context["photo_form"] = photo_form
         profile = getattr(self.request.user, "profile", None)
-        context["can_edit"] = self.request.user.is_superuser or (profile and profile.is_administrative)
+        context["can_edit"] = self.request.user.is_superuser or (
+            profile and profile.is_administrative
+        )
         context["can_upload"] = can_upload_photos(self.request.user)
         context["photos"] = order.photos.select_related("uploaded_by").prefetch_related("materials")
         return context
@@ -366,10 +284,6 @@ def can_upload_photos(user) -> bool:
     profile = getattr(user, "profile", None)
     return bool(profile and profile.role in {UserProfile.ROLE_OPERATOR, UserProfile.ROLE_ADMINISTRATIVE, UserProfile.ROLE_ADMIN})
 
-
-# ---------------------------
-# Presupuestos
-# ---------------------------
 
 class BudgetListView(AdministrativeRequiredMixin, ListView):
     template_name = "core/budget_list.html"
@@ -416,10 +330,6 @@ class BudgetUpdateView(AdministrativeRequiredMixin, TemplateView):
         messages.error(request, "No se pudo actualizar el presupuesto.")
         return self.render_to_response({"form": form, "is_edit": True, "budget": self.budget})
 
-
-# ---------------------------
-# Facturación / Gastos
-# ---------------------------
 
 class InvoiceListView(AdministrativeRequiredMixin, ListView):
     template_name = "core/invoice_list.html"
@@ -478,10 +388,6 @@ class ExpenseCreateView(AdministrativeRequiredMixin, TemplateView):
         messages.error(request, "No se pudo guardar el gasto.")
         return self.render_to_response({"form": form})
 
-
-# ---------------------------
-# Clientes / Proveedores
-# ---------------------------
 
 class ClientListView(AdministrativeRequiredMixin, ListView):
     template_name = "core/client_list.html"
