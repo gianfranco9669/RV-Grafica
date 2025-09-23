@@ -83,10 +83,16 @@ class ProductionOrderForm(forms.ModelForm):
             "notes": _widget_with_class(forms.Textarea(attrs={"rows": 3})),
         }
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["client"].required = False
+        if hasattr(self.fields["client"], "empty_label"):
+            self.fields["client"].empty_label = "Seleccioná un cliente (opcional)"
+
 
 class OrderItemForm(forms.Form):
     preset_key = forms.CharField(widget=forms.HiddenInput())
-    preset_name = forms.CharField(label="Descripción", required=False, disabled=True)
+    preset_name = forms.CharField(label="Descripción", required=False)
     detail = forms.CharField(label="Detalle", required=False)
     colors = forms.CharField(label="Colores", required=False)
     measure = forms.CharField(label="Medida", required=False)
@@ -221,8 +227,9 @@ def update_order_item_formset_labels(formset: Iterable[OrderItemForm]) -> None:
     label_map = {key: label for key, label in ORDER_ITEM_PRESETS}
     for form in formset:
         preset_key = form.initial.get("preset_key") or form.data.get(form.add_prefix("preset_key"))
-        if preset_key:
+        if preset_key and not form.initial.get("preset_name"):
             form.fields["preset_name"].initial = label_map.get(preset_key, "")
+        form.fields["preset_name"].widget = _widget_with_class(forms.TextInput())
         form.fields["detail"].widget = _widget_with_class(forms.TextInput())
         form.fields["colors"].widget = _widget_with_class(forms.TextInput())
         form.fields["measure"].widget = _widget_with_class(forms.TextInput())

@@ -100,9 +100,8 @@
             <tr>
               <td class="work-label">
                 {{ item_form.preset_key }}
-                {% with label=item_form.initial.preset_name|default:item_form.fields.preset_name.initial %}
-                  {{ label }}
-                {% endwith %}
+                {{ item_form.preset_name }}
+                {{ item_form.preset_name.errors }}
               </td>
               <td>{{ item_form.detail }}</td>
               <td>{{ item_form.colors }}</td>

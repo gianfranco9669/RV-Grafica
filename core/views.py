@@ -91,7 +91,7 @@ def build_order_item_initial(order: ProductionOrder | None = None) -> list[dict[
         initial.append(
             {
                 "preset_key": key,
-                "preset_name": label,
+                "preset_name": (item.custom_description if item and item.custom_description else label),
                 "detail": item.detail if item else "",
                 "colors": item.colors if item else "",
                 "measure": item.measure if item else "",
@@ -114,6 +114,7 @@ def save_order_items(order: ProductionOrder, formset: Iterable[OrderItemForm]) -
             order=order,
             preset_label=preset_key,
             defaults={
+                "custom_description": form.cleaned_data.get("preset_name", ""),
                 "detail": form.cleaned_data.get("detail", ""),
                 "colors": form.cleaned_data.get("colors", ""),
                 "measure": form.cleaned_data.get("measure", ""),

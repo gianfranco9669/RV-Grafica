@@ -103,7 +103,13 @@ class ProductionOrder(TimeStampedModel):
     ]
 
     order_number = models.PositiveIntegerField(unique=True, editable=False)
-    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="orders")
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.PROTECT,
+        related_name="orders",
+        blank=True,
+        null=True,
+    )
     order_date = models.DateField(default=date.today)
     service_line = models.CharField("Empresa / línea", max_length=255, blank=True)
     internal_code = models.CharField("Interno", max_length=100, blank=True)
@@ -125,7 +131,8 @@ class ProductionOrder(TimeStampedModel):
         ordering = ["-order_date", "-order_number"]
 
     def __str__(self) -> str:  # pragma: no cover - trivial representation
-        return f"Orden #{self.order_number} - {self.client.name}"
+        client_name = self.client.name if self.client else "Sin cliente"
+        return f"Orden #{self.order_number} - {client_name}"
 
     def save(self, *args, **kwargs) -> None:
         if not self.order_number:
@@ -149,6 +156,12 @@ class ProductionOrderItem(TimeStampedModel):
         related_name="items",
     )
     preset_label = models.CharField(max_length=50, choices=ORDER_ITEM_PRESETS)
+    custom_description = models.CharField(
+        "Descripción personalizada",
+        max_length=255,
+        blank=True,
+        default="",
+    )
     detail = models.CharField(max_length=255, blank=True)
     colors = models.CharField(max_length=255, blank=True)
     measure = models.CharField(max_length=100, blank=True)
@@ -179,7 +192,8 @@ class ProductionOrderItem(TimeStampedModel):
         ordering = ["order", "id"]
 
     def __str__(self) -> str:  # pragma: no cover - trivial representation
-        return f"{self.get_preset_label_display()} ({self.order.order_number})"
+        label = self.custom_description or self.get_preset_label_display()
+        return f"{label} ({self.order.order_number})"
 
     def save(self, *args, **kwargs) -> None:
         if self.total_amount is None and self.quantity is not None and self.unit_price is not None:
