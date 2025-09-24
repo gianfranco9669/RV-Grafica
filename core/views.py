@@ -35,6 +35,10 @@ from .models import (
 )
 
 
+# ---------------------------
+# Mixins de rol/permisos
+# ---------------------------
+
 class RoleRequiredMixin(UserPassesTestMixin):
     allowed_roles: set[str] = set()
 
@@ -61,6 +65,10 @@ class AdminOnlyMixin(LoginRequiredMixin, RoleRequiredMixin):
     allowed_roles = {UserProfile.ROLE_ADMIN}
 
 
+# ---------------------------
+# Dashboard
+# ---------------------------
+
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "core/dashboard.html"
 
@@ -81,49 +89,71 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         return context
 
 
+# ---------------------------
+# Utilidades de órdenes
+# ---------------------------
+
 def build_order_item_initial(order: ProductionOrder | None = None) -> list[dict[str, object]]:
-    items_map = {}
+    """
+    Devuelve filas iniciales para el formset:
+    - Si hay order con items, copia por preset_label.
+    - Si no hay, genera una fila por cada preset con valores seguros.
+    """
+    items_map: dict[str, ProductionOrderItem] = {}
     if order is not None:
         items_map = {item.preset_label: item for item in order.items.all()}
+
     initial: list[dict[str, object]] = []
     for key, label in ORDER_ITEM_PRESETS:
         item = items_map.get(key)
         initial.append(
             {
                 "preset_key": key,
-                "preset_name": (item.custom_description if item and item.custom_description else label),
-                "detail": item.detail if item else "",
-                "colors": item.colors if item else "",
-                "measure": item.measure if item else "",
-                "quantity": item.quantity,
-                "unit_price": item.unit_price,
-                "total_amount": item.total_amount,
+                # editable y con valor por defecto si no hay item
+                "preset_name": (getattr(item, "custom_description", None) or label),
+                "detail": getattr(item, "detail", "") or "",
+                "colors": getattr(item, "colors", "") or "",
+                "measure": getattr(item, "measure", "") or "",
+                # usar None para que el form muestre vacío (no crashea)
+                "quantity": getattr(item, "quantity", None),
+                "unit_price": getattr(item, "unit_price", None),
+                "total_amount": getattr(item, "total_amount", None),
             }
         )
     return initial
 
 
 def save_order_items(order: ProductionOrder, formset: Iterable[OrderItemForm]) -> None:
+    """
+    Guarda/actualiza ítems usando preset_key como llave lógica.
+    """
     for form in formset:
-        if not form.cleaned_data:
+        if not getattr(form, "cleaned_data", None):
             continue
         preset_key = form.cleaned_data.get("preset_key")
         if not preset_key:
+            # evitamos crear líneas huérfanas
             continue
+
         ProductionOrderItem.objects.update_or_create(
             order=order,
             preset_label=preset_key,
             defaults={
-                "custom_description": form.cleaned_data.get("preset_name", ""),
-                "detail": form.cleaned_data.get("detail", ""),
-                "colors": form.cleaned_data.get("colors", ""),
-                "measure": form.cleaned_data.get("measure", ""),
-                "quantity": form.cleaned_data.get("quantity"),
-                "unit_price": form.cleaned_data.get("unit_price"),
-                "total_amount": form.cleaned_data.get("total_amount"),
+                "custom_description": form.cleaned_data.get("preset_name", "") or "",
+                "detail": form.cleaned_data.get("detail", "") or "",
+                "colors": form.cleaned_data.get("colors", "") or "",
+                "measure": form.cleaned_data.get("measure", "") or "",
+                # Si vienen None, guardamos 0 para campos numéricos
+                "quantity": form.cleaned_data.get("quantity") or 0,
+                "unit_price": form.cleaned_data.get("unit_price") or 0,
+                "total_amount": form.cleaned_data.get("total_amount") or 0,
             },
         )
 
+
+# ---------------------------
+# Órdenes
+# ---------------------------
 
 class ProductionOrderListView(LoginRequiredMixin, ListView):
     template_name = "core/order_list.html"
@@ -137,7 +167,9 @@ class ProductionOrderListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(status=status)
         search = self.request.GET.get("q")
         if search:
-            queryset = queryset.filter(models.Q(client__name__icontains=search) | models.Q(order_number__icontains=search))
+            queryset = queryset.filter(
+                models.Q(client__name__icontains=search) | models.Q(order_number__icontains=search)
+            )
         return queryset.order_by("-order_date", "-order_number")
 
     def get_context_data(self, **kwargs):
@@ -282,8 +314,14 @@ def can_upload_photos(user) -> bool:
     if user.is_superuser:
         return True
     profile = getattr(user, "profile", None)
-    return bool(profile and profile.role in {UserProfile.ROLE_OPERATOR, UserProfile.ROLE_ADMINISTRATIVE, UserProfile.ROLE_ADMIN})
+    return bool(
+        profile and profile.role in {UserProfile.ROLE_OPERATOR, UserProfile.ROLE_ADMINISTRATIVE, UserProfile.ROLE_ADMIN}
+    )
 
+
+# ---------------------------
+# Presupuestos
+# ---------------------------
 
 class BudgetListView(AdministrativeRequiredMixin, ListView):
     template_name = "core/budget_list.html"
@@ -330,6 +368,10 @@ class BudgetUpdateView(AdministrativeRequiredMixin, TemplateView):
         messages.error(request, "No se pudo actualizar el presupuesto.")
         return self.render_to_response({"form": form, "is_edit": True, "budget": self.budget})
 
+
+# ---------------------------
+# Facturación / Gastos
+# ---------------------------
 
 class InvoiceListView(AdministrativeRequiredMixin, ListView):
     template_name = "core/invoice_list.html"
@@ -388,6 +430,10 @@ class ExpenseCreateView(AdministrativeRequiredMixin, TemplateView):
         messages.error(request, "No se pudo guardar el gasto.")
         return self.render_to_response({"form": form})
 
+
+# ---------------------------
+# Clientes / Proveedores
+# ---------------------------
 
 class ClientListView(AdministrativeRequiredMixin, ListView):
     template_name = "core/client_list.html"

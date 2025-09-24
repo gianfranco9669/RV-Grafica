@@ -12,6 +12,7 @@
     {% endif %}
   </div>
 </div>
+
 <div class="order-sheet shadow-sm">
   <div class="order-sheet__header">
     <div>
@@ -26,6 +27,7 @@
       </div>
     </div>
   </div>
+
   <div class="order-sheet__info">
     <div class="row g-3">
       <div class="col-md-4">
@@ -72,6 +74,7 @@
       </div>
     </div>
   </div>
+
   <div class="order-sheet__table table-responsive">
     <table class="table table-bordered">
       <thead>
@@ -101,6 +104,7 @@
     </table>
   </div>
 </div>
+
 <div class="mt-4 row g-4">
   <div class="col-lg-6">
     <div class="card shadow-sm border-0 h-100">
@@ -112,21 +116,33 @@
             {% if photo_form.non_field_errors %}
               <div class="alert alert-danger">{{ photo_form.non_field_errors }}</div>
             {% endif %}
+
             <div class="mb-3">
               <label class="form-label">Foto</label>
               {{ photo_form.image }}
-              {{ photo_form.image.errors }}
+              {% for e in photo_form.image.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
             </div>
+
             <div class="mb-3">
               <label class="form-label">Descripción</label>
               {{ photo_form.description }}
-              {{ photo_form.description.errors }}
+              {% for e in photo_form.description.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
             </div>
+
+            <!-- MATERIALES: checkboxes bonitos con Bootstrap -->
             <div class="mb-3">
-              <label class="form-label">Materiales utilizados</label>
-              {{ photo_form.materials }}
-              {{ photo_form.materials.errors }}
+              <label class="form-label d-block">Materiales utilizados</label>
+              <div class="d-flex flex-wrap gap-3">
+                {% for cb in photo_form.materials %}
+                  <div class="form-check">
+                    {{ cb.tag }}
+                    <label class="form-check-label" for="{{ cb.id_for_label }}">{{ cb.choice_label }}</label>
+                  </div>
+                {% endfor %}
+              </div>
+              {% for e in photo_form.materials.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
             </div>
+
             <button class="btn btn-primary" type="submit">Subir foto</button>
           </form>
         {% else %}
@@ -135,6 +151,7 @@
       </div>
     </div>
   </div>
+
   <div class="col-lg-6">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
@@ -148,7 +165,9 @@
                 {% if photo.materials.all %}
                   <p class="small text-muted mb-1">Materiales: {{ photo.materials.all|join:", " }}</p>
                 {% endif %}
-                <p class="small text-muted mb-0">Subido por {{ photo.uploaded_by|default:"Equipo RV" }} el {{ photo.created_at|date:"d/m/Y H:i" }}</p>
+                <p class="small text-muted mb-0">
+                  Subido por {{ photo.uploaded_by|default:"Equipo RV" }} el {{ photo.created_at|date:"d/m/Y H:i" }}
+                </p>
               </div>
             {% endfor %}
           </div>
@@ -159,4 +178,14 @@
     </div>
   </div>
 </div>
+
+<!-- Un toque de estilos para la grilla de fotos (opcional) -->
+<style>
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.photo-card { border: 1px solid rgba(0,0,0,.08); border-radius: .5rem; padding: .5rem; }
+</style>
 {% endblock %}
