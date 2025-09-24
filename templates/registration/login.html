@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesión · RV Gráfica{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow-sm border-0 p-4">
+      <h1 class="h4 mb-3 text-center">Ingresar</h1>
+      <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <div class="mb-3">
+          <label class="form-label" for="id_username">Usuario</label>
+          {{ form.username.errors }}
+          <input
+            type="text"
+            name="{{ form.username.name }}"
+            value="{{ form.username.value|default_if_none:'' }}"
+            class="form-control"
+            required
+            autofocus
+            id="id_username"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="id_password">Contraseña</label>
+          {{ form.password.errors }}
+          <input
+            type="password"
+            name="{{ form.password.name }}"
+            class="form-control"
+            required
+            id="id_password"
+          />
+        </div>
+        <button class="btn btn-primary w-100" type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

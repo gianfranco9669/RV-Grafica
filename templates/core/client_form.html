@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{% if is_edit %}Editar cliente ·{% else %}Nuevo cliente ·{% endif %} RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">{% if is_edit %}Editar cliente{% else %}Nuevo cliente{% endif %}</h1>
+<form method="post" class="card shadow-sm border-0 p-4">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Nombre</label>
+      {{ form.name }}
+      {{ form.name.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Empresa / Línea</label>
+      {{ form.service_line }}
+      {{ form.service_line.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Contacto</label>
+      {{ form.contact_name }}
+      {{ form.contact_name.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Teléfono</label>
+      {{ form.phone }}
+      {{ form.phone.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Mail</label>
+      {{ form.email }}
+      {{ form.email.errors }}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Notas</label>
+      {{ form.notes }}
+      {{ form.notes.errors }}
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <a class="btn btn-outline-secondary" href="{% url 'client_list' %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}
