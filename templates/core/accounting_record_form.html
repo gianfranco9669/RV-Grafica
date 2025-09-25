@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Nuevo registro contable · RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Cargar registro contable</h1>
+<form method="post" class="card shadow-sm border-0 p-4">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Tipo</label>
+      {{ form.record_type }}
+      {{ form.record_type.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Fecha</label>
+      {{ form.date }}
+      {{ form.date.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Documento</label>
+      {{ form.document_number }}
+      {{ form.document_number.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Cliente</label>
+      {{ form.client }}
+      {{ form.client.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Proveedor</label>
+      {{ form.supplier }}
+      {{ form.supplier.errors }}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Descripción</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Debe</label>
+      {{ form.debit }}
+      {{ form.debit.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Haber</label>
+      {{ form.credit }}
+      {{ form.credit.errors }}
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <a class="btn btn-outline-secondary" href="{% url 'accounting_record_list' %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}

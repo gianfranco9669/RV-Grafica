@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Panel principal · RV Gráfica{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-12 col-lg-8">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <h2 class="card-title h5 mb-4">Resumen de producción</h2>
+        <div class="row text-center g-3">
+          <div class="col-4">
+            <div class="status-counter pending">
+              <span class="count">{{ pending_orders }}</span>
+              <span class="label">Pendientes</span>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="status-counter in-progress">
+              <span class="count">{{ in_progress_orders }}</span>
+              <span class="label">En curso</span>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="status-counter completed">
+              <span class="count">{{ completed_orders }}</span>
+              <span class="label">Finalizadas</span>
+            </div>
+          </div>
+        </div>
+        {% if can_manage_orders %}
+          <div class="mt-4 text-end">
+            <a class="btn btn-primary" href="{% url 'order_create' %}">Crear nueva orden</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-4">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <h2 class="card-title h5 mb-4">Finanzas</h2>
+        <p class="mb-2"><i class="bi bi-calculator"></i> Presupuestos generados: <strong>{{ budgets_count }}</strong></p>
+        <p class="mb-2"><i class="bi bi-arrow-up-right-circle"></i> Facturas de venta: <strong>{{ sales_invoices }}</strong></p>
+        <p class="mb-2"><i class="bi bi-arrow-down-right-circle"></i> Facturas de compra: <strong>{{ purchase_invoices }}</strong></p>
+        <p class="mb-0"><i class="bi bi-cash-coin"></i> Gastos registrados: <strong>${{ expense_total|floatformat:2 }}</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

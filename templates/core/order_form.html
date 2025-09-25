@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}{% if is_edit %}Editar orden ·{% else %}Nueva orden ·{% endif %} RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">{% if is_edit %}Editar orden de producción{% else %}Nueva orden de producción{% endif %}</h1>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ formset.management_form }}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="order-sheet shadow-sm">
+    <div class="order-sheet__header">
+      <div>
+        <h2 class="mb-1">ORDEN DE PEDIDO</h2>
+        <p class="mb-0">Gráfica RV · Autoadhesiva y cartelería</p>
+      </div>
+      <div class="order-sheet__meta">
+        <div><span class="label">N°</span> <span class="value">{% if is_edit %}{{ order.order_number }}{% else %}—{% endif %}</span></div>
+        <div class="text-end">
+          <label class="label" for="id_order_date">Fecha</label>
+          {{ form.order_date }}
+          {{ form.order_date.errors }}
+        </div>
+      </div>
+    </div>
+    <div class="order-sheet__info">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Cliente</label>
+          {{ form.client }}
+          {{ form.client.errors }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Estado</label>
+          {% if is_edit %}
+            {{ form.status }}
+          {% else %}
+            <input class="form-control" value="Pendiente" disabled />
+            <input type="hidden" name="status" value="{{ default_status }}" />
+          {% endif %}
+          {{ form.status.errors }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Empresa / Línea</label>
+          {{ form.service_line }}
+          {{ form.service_line.errors }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Interno</label>
+          {{ form.internal_code }}
+          {{ form.internal_code.errors }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Carrocería</label>
+          {{ form.bodywork }}
+          {{ form.bodywork.errors }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Nombre y apellido</label>
+          {{ form.contact_name }}
+          {{ form.contact_name.errors }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Mail</label>
+          {{ form.email }}
+          {{ form.email.errors }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Teléfono</label>
+          {{ form.phone }}
+          {{ form.phone.errors }}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Observaciones</label>
+          {{ form.notes }}
+          {{ form.notes.errors }}
+        </div>
+      </div>
+    </div>
+    <div class="order-sheet__table table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Descripción del trabajo</th>
+            <th>Detalle</th>
+            <th>Colores</th>
+            <th>Medida</th>
+            <th>Cant.</th>
+            <th>Precio</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if formset.non_form_errors %}
+            <tr>
+              <td colspan="7" class="text-danger">{{ formset.non_form_errors }}</td>
+            </tr>
+          {% endif %}
+          {% for item_form in formset %}
+            <tr>
+              <td class="work-label">
+                {{ item_form.preset_key }}
+                {{ item_form.preset_name }}
+                {{ item_form.preset_name.errors }}
+              </td>
+              <td>{{ item_form.detail }}</td>
+              <td>{{ item_form.colors }}</td>
+              <td>{{ item_form.measure }}</td>
+              <td class="w-10">{{ item_form.quantity }}</td>
+              <td class="w-10">{{ item_form.unit_price }}</td>
+              <td class="w-10">{{ item_form.total_amount }}</td>
+            </tr>
+            {% if item_form.errors %}
+              <tr class="table-danger">
+                <td colspan="7">
+                  {% for field, error_list in item_form.errors.items %}
+                    <div>{{ error_list|join:", " }}</div>
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <a class="btn btn-outline-secondary" href="{% if is_edit %}{% url 'order_detail' order.pk %}{% else %}{% url 'order_list' %}{% endif %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}

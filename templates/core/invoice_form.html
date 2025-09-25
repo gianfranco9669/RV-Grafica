@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Nueva factura · RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Cargar factura</h1>
+<form method="post" class="card shadow-sm border-0 p-4">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Tipo</label>
+      {{ form.invoice_type }}
+      {{ form.invoice_type.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Número</label>
+      {{ form.number }}
+      {{ form.number.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Fecha</label>
+      {{ form.date }}
+      {{ form.date.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Cliente</label>
+      {{ form.client }}
+      {{ form.client.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Proveedor</label>
+      {{ form.supplier }}
+      {{ form.supplier.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Orden relacionada</label>
+      {{ form.order }}
+      {{ form.order.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Importe neto</label>
+      {{ form.gross_amount }}
+      {{ form.gross_amount.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Alícuota de IVA</label>
+      {{ form.iva_rate }}
+      {{ form.iva_rate.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">IVA calculado</label>
+      {{ form.iva_amount }}
+      {{ form.iva_amount.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Percepciones</label>
+      {{ form.additional_tax_type }}
+      {{ form.additional_tax_type.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Importe percepciones</label>
+      {{ form.additional_tax_amount }}
+      {{ form.additional_tax_amount.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Total factura</label>
+      {{ form.amount }}
+      {{ form.amount.errors }}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Descripción</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <a class="btn btn-outline-secondary" href="{% url 'invoice_list' %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}

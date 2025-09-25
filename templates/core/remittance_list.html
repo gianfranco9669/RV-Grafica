@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Remitos · RV Gráfica{% endblock %}
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+  <h1 class="h4 mb-0">Remitos</h1>
+  <a class="btn btn-primary" href="{% url 'remittance_create' %}"><i class="bi bi-plus-lg"></i> Nuevo remito</a>
+</div>
+<div class="card shadow-sm border-0">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Número</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Orden</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for remittance in object_list %}
+          <tr>
+            <td class="fw-semibold">{{ remittance.number }}</td>
+            <td>{{ remittance.date|date:"d/m/Y" }}</td>
+            <td>{{ remittance.client|default:"—" }}</td>
+            <td>{% if remittance.order %}#{{ remittance.order.order_number }}{% else %}—{% endif %}</td>
+            <td>{{ remittance.description|default:"—" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="text-center py-4 text-muted">No hay remitos cargados.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if is_paginated %}
+    <div class="card-footer bg-white">
+      <nav>
+        <ul class="pagination justify-content-end mb-0">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+          {% endif %}
+          <li class="page-item active"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

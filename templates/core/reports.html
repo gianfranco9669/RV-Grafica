@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Reportes · RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Reportes</h1>
+<form method="get" class="card shadow-sm border-0 p-4 mb-4">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Tipo de reporte</label>
+      {{ form.report_type }}
+      {{ form.report_type.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Cliente</label>
+      {{ form.client }}
+      {{ form.client.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Proveedor</label>
+      {{ form.supplier }}
+      {{ form.supplier.errors }}
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Desde</label>
+      {{ form.date_from }}
+      {{ form.date_from.errors }}
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Hasta</label>
+      {{ form.date_to }}
+      {{ form.date_to.errors }}
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <button class="btn btn-outline-secondary" type="submit">Generar reporte</button>
+  </div>
+</form>
+{% if report.entries %}
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h2 class="h6 mb-0">Resultados</h2>
+      <span class="badge bg-primary">Saldo: ${{ report.balance|floatformat:2 }}</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Fecha</th>
+            <th>Concepto</th>
+            <th>Cliente</th>
+            <th>Proveedor</th>
+            <th>Tipo</th>
+            <th class="text-end">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in report.entries %}
+            <tr>
+              <td>{{ entry.date|date:"d/m/Y" }}</td>
+              <td>{{ entry.concept }}</td>
+              <td>{{ entry.client|default:"—" }}</td>
+              <td>{{ entry.supplier|default:"—" }}</td>
+              <td>{{ entry.movement_type }}</td>
+              <td class="text-end">${{ entry.amount|floatformat:2 }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% elif request.GET %}
+  <div class="alert alert-info">No se encontraron movimientos para los filtros seleccionados.</div>
+{% endif %}
+{% endblock %}

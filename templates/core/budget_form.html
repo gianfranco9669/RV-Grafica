@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{% if is_edit %}Editar presupuesto ·{% else %}Nuevo presupuesto ·{% endif %} RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">{% if is_edit %}Editar presupuesto{% else %}Nuevo presupuesto{% endif %}</h1>
+<form method="post" class="card shadow-sm border-0 p-4">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Cliente</label>
+      {{ form.client }}
+      {{ form.client.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Título</label>
+      {{ form.title }}
+      {{ form.title.errors }}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Descripción</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Fecha</label>
+      {{ form.date }}
+      {{ form.date.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Metros cuadrados</label>
+      {{ form.square_meters }}
+      {{ form.square_meters.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Precio por m²</label>
+      {{ form.price_per_square_meter }}
+      {{ form.price_per_square_meter.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Costos adicionales</label>
+      {{ form.additional_costs }}
+      {{ form.additional_costs.errors }}
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <a class="btn btn-outline-secondary" href="{% url 'budget_list' %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}

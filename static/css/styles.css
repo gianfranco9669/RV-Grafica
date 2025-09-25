@@ -1,0 +1,167 @@
+body {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  background-color: #f5f6f8;
+  color: #1f2933;
+}
+
+.navbar-brand {
+  letter-spacing: 0.05em;
+}
+
+.card {
+  border-radius: 16px;
+}
+
+.table thead th {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+}
+
+.status-counter {
+  background-color: #f0f4ff;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.status-counter.pending {
+  background: linear-gradient(135deg, #f9f6d9, #fffbe6);
+}
+
+.status-counter.in-progress {
+  background: linear-gradient(135deg, #d8f0ff, #e9f6ff);
+}
+
+.status-counter.completed {
+  background: linear-gradient(135deg, #d9f9e2, #ebffef);
+}
+
+.status-counter .count {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.status-counter .label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #4d5c6d;
+}
+
+.order-sheet {
+  background: #fff;
+  border-radius: 18px;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.order-sheet__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #111827;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.order-sheet__header h2 {
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.order-sheet__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.order-sheet__meta .label {
+  font-weight: 600;
+  color: #4b5563;
+  margin-right: 0.5rem;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.order-sheet__meta .value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.order-sheet__info p {
+  margin-bottom: 0.2rem;
+}
+
+.order-sheet__table table {
+  border-color: #cbd5e1;
+}
+
+.order-sheet__table th,
+.order-sheet__table td {
+  vertical-align: middle;
+}
+
+.order-sheet__table .work-label {
+  font-weight: 600;
+  width: 220px;
+}
+
+.order-sheet input[type="text"],
+.order-sheet input[type="email"],
+.order-sheet input[type="number"],
+.order-sheet input[type="date"],
+.order-sheet textarea,
+.order-sheet select {
+  border-radius: 8px;
+}
+
+.order-sheet__table input,
+.order-sheet__table select {
+  font-size: 0.9rem;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.photo-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.photo-card img {
+  border-radius: 8px;
+  object-fit: cover;
+  width: 100%;
+  height: 140px;
+}
+
+.table-danger td {
+  background-color: #fef2f2 !important;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  header,
+  .btn,
+  .alert,
+  nav,
+  footer,
+  .card > .card-body form {
+    display: none !important;
+  }
+
+  .order-sheet {
+    box-shadow: none !important;
+    border: none;
+  }
+}

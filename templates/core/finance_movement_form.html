@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Nuevo movimiento financiero · RV Gráfica{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Registrar movimiento de cuenta corriente</h1>
+<form method="post" class="card shadow-sm border-0 p-4">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Tipo</label>
+      {{ form.movement_type }}
+      {{ form.movement_type.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Fecha</label>
+      {{ form.date }}
+      {{ form.date.errors }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Importe</label>
+      {{ form.amount }}
+      {{ form.amount.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Cliente</label>
+      {{ form.client }}
+      {{ form.client.errors }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Proveedor</label>
+      {{ form.supplier }}
+      {{ form.supplier.errors }}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Concepto</label>
+      {{ form.concept }}
+      {{ form.concept.errors }}
+    </div>
+  </div>
+  <div class="text-end mt-4">
+    <a class="btn btn-outline-secondary" href="{% url 'finance_movement_list' %}">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+  </div>
+</form>
+{% endblock %}
