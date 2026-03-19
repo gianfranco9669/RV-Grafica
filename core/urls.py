@@ -5,7 +5,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.DashboardView.as_view(), name="dashboard"),
+    path("", views.LandingPageView.as_view(), name="landing"),
+    path("panel/", views.DashboardView.as_view(), name="dashboard"),
     path("ordenes/", views.ProductionOrderListView.as_view(), name="order_list"),
     path("ordenes/nueva/", views.ProductionOrderCreateView.as_view(), name="order_create"),
     path("ordenes/<int:pk>/", views.ProductionOrderDetailView.as_view(), name="order_detail"),
