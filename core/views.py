@@ -7,11 +7,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import models
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
-from django.views.generic import DetailView, ListView, TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, FormView, ListView, TemplateView
 
 from .forms import (
     BudgetForm,
     ClientForm,
+    CommercialContactForm,
     ExpenseForm,
     InvoiceForm,
     OrderItemForm,
@@ -63,6 +65,194 @@ class AdministrativeRequiredMixin(LoginRequiredMixin, RoleRequiredMixin):
 
 class AdminOnlyMixin(LoginRequiredMixin, RoleRequiredMixin):
     allowed_roles = {UserProfile.ROLE_ADMIN}
+
+
+class LandingPageView(FormView):
+    template_name = "core/landing.html"
+    form_class = CommercialContactForm
+    success_url = reverse_lazy("landing")
+
+    def form_valid(self, form):
+        company_name = form.cleaned_data["company_name"]
+        messages.success(
+            self.request,
+            f"Gracias por contactarte con AVESOL, {company_name}. Tu consulta comercial quedó registrada para una futura integración operativa.",
+        )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return f"{reverse_lazy('landing')}#contacto"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["product_categories"] = [
+            {
+                "name": "Pollos enteros",
+                "description": "Soluciones para abastecimiento de volumen con foco en presentación uniforme, conservación y continuidad comercial.",
+                "icon": "bi-basket2-fill",
+                "tag": "Rotación de góndola y freezer",
+            },
+            {
+                "name": "Trozados",
+                "description": "Pechuga, pata muslo, alitas y cortes preparados para distintos canales de venta y necesidades de reposición.",
+                "icon": "bi-grid-1x2-fill",
+                "tag": "Versatilidad por corte",
+            },
+            {
+                "name": "Papas fritas",
+                "description": "Líneas pensadas para gastronomía y comercios que buscan rendimiento, practicidad y regularidad en producto congelado.",
+                "icon": "bi-stars",
+                "tag": "Alto consumo",
+            },
+            {
+                "name": "Congelados",
+                "description": "Mix de productos congelados para ampliar surtido y atender distintas oportunidades comerciales del canal moderno.",
+                "icon": "bi-snow2",
+                "tag": "Surtido escalable",
+            },
+            {
+                "name": "Rebozados",
+                "description": "Opciones listas para venta rápida o cocina profesional, con foco en practicidad, rendimiento y salida sostenida.",
+                "icon": "bi-shield-fill-check",
+                "tag": "Conveniencia y valor agregado",
+            },
+            {
+                "name": "Línea gastronómica",
+                "description": "Productos especiales y presentaciones orientadas a restaurantes, hoteles, rotiserías y cocinas de alta demanda.",
+                "icon": "bi-briefcase-fill",
+                "tag": "Canal Horeca",
+            },
+        ]
+        context["features"] = [
+            {
+                "title": "Calidad comercial",
+                "description": "Selección de líneas aptas para sostener imagen, rotación y confianza en cada canal de venta.",
+                "icon": "bi-award",
+            },
+            {
+                "title": "Cadena de frío",
+                "description": "Conservación y manipulación orientadas a resguardar temperatura, producto y condición de entrega.",
+                "icon": "bi-thermometer-snow",
+            },
+            {
+                "title": "Distribución coordinada",
+                "description": "Organización logística según recorridos, frecuencia de compra, prioridades y ventanas de recepción.",
+                "icon": "bi-truck",
+            },
+            {
+                "title": "Stock programado",
+                "description": "Visión de abastecimiento para reducir quiebres, ordenar reposición y acompañar el crecimiento del cliente.",
+                "icon": "bi-boxes",
+            },
+            {
+                "title": "Atención comercial",
+                "description": "Seguimiento cercano de cuentas, consultas, cotizaciones y oportunidades de ampliación de surtido.",
+                "icon": "bi-headset",
+            },
+            {
+                "title": "Cobertura flexible",
+                "description": "Modelo preparado para adaptarse a zonas, escalas operativas y requerimientos de entrega.",
+                "icon": "bi-geo-alt",
+            },
+            {
+                "title": "Cumplimiento",
+                "description": "Compromiso con tiempos, coordinación y una relación profesional basada en previsibilidad.",
+                "icon": "bi-check2-circle",
+            },
+            {
+                "title": "Escala comercial",
+                "description": "Preparación para operar con cuentas recurrentes, lanzamientos y desarrollos por volumen.",
+                "icon": "bi-bar-chart-line",
+            },
+        ]
+        context["segments"] = [
+            {
+                "title": "Mayoristas y distribuidores",
+                "description": "Propuestas para operadores que necesitan surtido competitivo, volumen y entregas coordinadas.",
+            },
+            {
+                "title": "Supermercados y autoservicios",
+                "description": "Líneas de abastecimiento para freezers, góndolas y rotación constante en puntos de venta.",
+            },
+            {
+                "title": "Restaurantes y gastronomía",
+                "description": "Opciones congeladas orientadas a practicidad, rendimiento y continuidad en cocina profesional.",
+            },
+            {
+                "title": "Comercios y granjas",
+                "description": "Mix de productos para ampliar oferta, sostener calidad y fortalecer la propuesta comercial del local.",
+            },
+        ]
+        context["featured_products"] = [
+            {
+                "category": "Trozados y avícolas",
+                "name": "Línea de cortes seleccionados",
+                "description": "Bloque modelo para destacar presentaciones con información comercial clara y futura ficha técnica.",
+                "details": ["Presentaciones adaptables", "Canal mayorista o retail", "Base para integrar gramajes y marcas"],
+                "image": "images/avesol-storage.svg",
+                "alt": "Cámaras y pallets como soporte del catálogo comercial de trozados y productos avícolas",
+            },
+            {
+                "category": "Papas y congelados",
+                "name": "Soluciones para alto giro",
+                "description": "Ideal para comunicar productos de salida constante en gastronomía, autoservicios y comercios especializados.",
+                "details": ["Practicidad operativa", "Reposición sostenida", "Formato escalable para nuevas líneas"],
+                "image": "images/avesol-hero-grid.svg",
+                "alt": "Composición visual de distintas familias de productos congelados para catálogo AVESOL",
+            },
+            {
+                "category": "Rebozados y especiales",
+                "name": "Línea lista para potenciar surtido",
+                "description": "Espacio preparado para sumar artículos de conveniencia, gastronómicos o de valor agregado comercial.",
+                "details": ["Mayor ticket por categoría", "Venta rápida", "Preparado para filtros y fichas"],
+                "image": "images/avesol-distribution.svg",
+                "alt": "Despacho y logística de productos congelados listos para entrega a clientes comerciales",
+            },
+        ]
+        context["process_steps"] = [
+            {
+                "title": "Selección comercial",
+                "description": "Definimos el surtido y las líneas más convenientes según canal, demanda y perfil de rotación.",
+            },
+            {
+                "title": "Almacenamiento y conservación",
+                "description": "Organizamos stock bajo criterios de orden, temperatura y cuidado del producto congelado.",
+            },
+            {
+                "title": "Armado de pedidos",
+                "description": "Consolidamos cada solicitud priorizando exactitud, presentación y preparación para despacho eficiente.",
+            },
+            {
+                "title": "Distribución coordinada",
+                "description": "Programamos entregas según zona, frecuencia y requerimientos operativos de cada cliente.",
+            },
+            {
+                "title": "Recepción y seguimiento",
+                "description": "Sostenemos comunicación comercial para resolver consultas, reposiciones y oportunidades de crecimiento.",
+            },
+            {
+                "title": "Desarrollo de cuenta",
+                "description": "Acompañamos la evolución del negocio con nuevas categorías, mix comercial y planificación de abastecimiento.",
+            },
+        ]
+        context["trust_quotes"] = [
+            {
+                "quote": "Necesitábamos una propuesta ordenada para reposición frecuente y AVESOL nos transmitió estructura, respuesta y seriedad.",
+                "author": "Cliente placeholder",
+                "role": "Cadena de cercanía",
+            },
+            {
+                "quote": "La lógica comercial está pensada para abastecer con previsibilidad, algo clave cuando el congelado tiene alta rotación.",
+                "author": "Testimonio placeholder",
+                "role": "Distribuidor regional",
+            },
+            {
+                "quote": "La web deja claro el perfil corporativo de una empresa preparada para trabajar con cuentas reales del mercado.",
+                "author": "Referencia placeholder",
+                "role": "Compras gastronómicas",
+            },
+        ]
+        return context
 
 
 # ---------------------------

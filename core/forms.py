@@ -233,3 +233,53 @@ def update_order_item_formset_labels(formset: Iterable[OrderItemForm]) -> None:
         form.fields["quantity"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))
         form.fields["unit_price"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))
         form.fields["total_amount"].widget = _widget_with_class(forms.NumberInput(attrs={"step": "0.01"}))
+
+
+class CommercialContactForm(forms.Form):
+    BUSINESS_TYPE_CHOICES = [
+        ("", "Seleccioná una opción"),
+        ("mayorista", "Mayorista / distribuidor"),
+        ("supermercado", "Supermercado / autoservicio"),
+        ("gastronomia", "Restaurante / gastronomía"),
+        ("comercio", "Comercio minorista"),
+        ("otro", "Otro tipo de negocio"),
+    ]
+
+    company_name = forms.CharField(
+        label="Empresa",
+        max_length=120,
+        widget=_widget_with_class(forms.TextInput(attrs={"placeholder": "Nombre de la empresa"})),
+    )
+    contact_name = forms.CharField(
+        label="Nombre y apellido",
+        max_length=120,
+        widget=_widget_with_class(forms.TextInput(attrs={"placeholder": "Persona de contacto"})),
+    )
+    email = forms.EmailField(
+        label="Email",
+        widget=_widget_with_class(forms.EmailInput(attrs={"placeholder": "comercial@empresa.com"})),
+    )
+    phone = forms.CharField(
+        label="Teléfono",
+        max_length=50,
+        widget=_widget_with_class(forms.TextInput(attrs={"placeholder": "+54 9 ..."})),
+    )
+    business_type = forms.ChoiceField(
+        label="Tipo de negocio",
+        choices=BUSINESS_TYPE_CHOICES,
+        widget=_widget_with_class(forms.Select()),
+    )
+    location = forms.CharField(
+        label="Localidad / zona",
+        max_length=120,
+        widget=_widget_with_class(forms.TextInput(attrs={"placeholder": "Ciudad, provincia o zona de cobertura"})),
+    )
+    interest = forms.CharField(
+        label="Interés principal",
+        max_length=160,
+        widget=_widget_with_class(forms.TextInput(attrs={"placeholder": "Ej.: pollos trozados, papas fritas, catálogo completo"})),
+    )
+    message = forms.CharField(
+        label="Mensaje",
+        widget=_widget_with_class(forms.Textarea(attrs={"rows": 5, "placeholder": "Contanos qué tipo de productos necesitás, frecuencia estimada, volumen o zona de entrega."})),
+    )

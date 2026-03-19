@@ -1,0 +1,491 @@
+{% extends "public_base.html" %}
+
+{% block title %}AVESOL | Distribución mayorista de alimentos congelados{% endblock %}
+
+{% block content %}
+<header class="site-header sticky-top">
+  <nav class="navbar navbar-expand-lg navbar-dark avesol-navbar">
+    <div class="container py-2 py-lg-3">
+      <a class="navbar-brand d-flex align-items-center gap-3" href="#inicio" aria-label="Ir al inicio de AVESOL">
+        <span class="brand-mark">A</span>
+        <span>
+          <span class="brand-name d-block">AVESOL</span>
+          <span class="brand-caption d-block">Comercialización de alimentos congelados</span>
+        </span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNavbar" aria-controls="publicNavbar" aria-expanded="false" aria-label="Abrir menú de navegación">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="publicNavbar">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+          <li class="nav-item"><a class="nav-link" href="#nosotros">Nosotros</a></li>
+          <li class="nav-item"><a class="nav-link" href="#productos">Productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#soluciones">Soluciones</a></li>
+          <li class="nav-item"><a class="nav-link" href="#logistica">Logística</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+        </ul>
+        <div class="d-flex ms-lg-4 mt-3 mt-lg-0 gap-2">
+          <a class="btn btn-outline-light btn-sm px-3" href="mailto:comercial@avesol.com.ar">Catálogo comercial</a>
+          <a class="btn btn-warning btn-sm px-3" href="#contacto">Solicitar propuesta</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero-section" id="inicio">
+    <div class="container position-relative">
+      <div class="row align-items-center g-5">
+        <div class="col-12 col-xl-7">
+          <span class="eyebrow">Abastecimiento profesional para el canal mayorista y gastronómico</span>
+          <h1>AVESOL conecta volumen, cadena de frío y respuesta comercial para tu negocio.</h1>
+          <p class="hero-copy">
+            Comercializamos pollos, trozados, papas fritas, rebozados y alimentos congelados con foco en continuidad de stock,
+            calidad de producto y distribución confiable. Trabajamos para supermercados, distribuidores, autoservicios, comercios y gastronomía organizada.
+          </p>
+          <div class="hero-actions d-flex flex-wrap gap-3">
+            <a class="btn btn-avesol-primary btn-lg" href="#contacto">Quiero recibir precios</a>
+            <a class="btn btn-avesol-secondary btn-lg" href="#productos">Ver líneas de productos</a>
+          </div>
+          <div class="hero-metrics row g-3 mt-4">
+            <div class="col-6 col-md-4">
+              <article class="metric-card">
+                <span class="metric-value">+6</span>
+                <span class="metric-label">líneas comerciales listas para escalar</span>
+              </article>
+            </div>
+            <div class="col-6 col-md-4">
+              <article class="metric-card">
+                <span class="metric-value">24/7</span>
+                <span class="metric-label">seguimiento de cadena de frío y coordinación logística</span>
+              </article>
+            </div>
+            <div class="col-12 col-md-4">
+              <article class="metric-card">
+                <span class="metric-value">B2B</span>
+                <span class="metric-label">atención comercial para cuentas mayoristas y de reposición</span>
+              </article>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-xl-5">
+          <div class="hero-visual">
+            <div class="hero-visual__main card-glow">
+              <img src="{% static 'images/avesol-hero-grid.svg' %}" alt="Ilustración de productos congelados, logística y cadena de abastecimiento de AVESOL" class="img-fluid" />
+            </div>
+            <div class="floating-card floating-card--top">
+              <span class="floating-card__label">Red comercial</span>
+              <strong>Mayoristas · supermercados · gastronomía</strong>
+            </div>
+            <div class="floating-card floating-card--bottom">
+              <span class="floating-card__label">Operación</span>
+              <strong>Stock programado y entregas coordinadas</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-light" id="nosotros">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-12 col-lg-6">
+          <div class="section-heading">
+            <span class="eyebrow eyebrow-dark">Sobre AVESOL</span>
+            <h2>Una comercializadora preparada para sostener abastecimiento, rotación y servicio.</h2>
+            <p>
+              AVESOL es una empresa enfocada en la comercialización y distribución de alimentos congelados para clientes que necesitan previsibilidad, calidad y respuesta.
+              No somos un frigorífico productor: nuestra fortaleza está en articular oferta, stock y logística para que cada cuenta opere con respaldo comercial real.
+            </p>
+          </div>
+          <div class="info-grid">
+            <article class="info-card">
+              <i class="bi bi-shield-check"></i>
+              <h3>Selección y control</h3>
+              <p>Trabajamos con criterios claros de calidad, presentación y conservación para sostener estándares homogéneos de producto.</p>
+            </article>
+            <article class="info-card">
+              <i class="bi bi-box-seam"></i>
+              <h3>Stock y surtido</h3>
+              <p>Armamos propuestas de abastecimiento con líneas pensadas para volumen, reposición y venta continua.</p>
+            </article>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="institutional-panel">
+            <img src="{% static 'images/avesol-storage.svg' %}" alt="Depósito con cámaras de frío, pallets y operación logística de alimentos congelados" class="img-fluid rounded-4 w-100" />
+            <div class="institutional-panel__content">
+              <div>
+                <span class="panel-kicker">Enfoque institucional</span>
+                <p>
+                  Construimos relaciones comerciales sobre cumplimiento, tiempos acordados y atención directa. Nuestro objetivo es ser un socio de abastecimiento confiable, capaz de acompañar tanto operaciones recurrentes como necesidades puntuales de escala.
+                </p>
+              </div>
+              <ul class="panel-list">
+                <li>Planificación comercial por categoría</li>
+                <li>Respuesta para clientes de rotación sostenida</li>
+                <li>Comunicación ágil con seguimiento de pedidos</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-cream" id="productos">
+    <div class="container">
+      <div class="section-heading section-heading--center narrow">
+        <span class="eyebrow eyebrow-dark">Categorías de productos</span>
+        <h2>Líneas preparadas para abastecer mostrador, freezer, góndola y cocina profesional.</h2>
+        <p>
+          Presentamos una estructura clara y escalable para futuras fichas técnicas, catálogos PDF o integraciones con un catálogo completo.
+        </p>
+      </div>
+      <div class="row g-4 mt-1">
+        {% for category in product_categories %}
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="product-category-card h-100">
+              <div class="product-category-card__icon"><i class="bi {{ category.icon }}"></i></div>
+              <h3>{{ category.name }}</h3>
+              <p>{{ category.description }}</p>
+              <span class="category-tag">{{ category.tag }}</span>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container">
+      <div class="section-heading narrow">
+        <span class="eyebrow">Por qué elegir AVESOL</span>
+        <h2>Seriedad operativa para un rubro donde la consistencia importa todos los días.</h2>
+      </div>
+      <div class="row g-4 mt-1">
+        {% for feature in features %}
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="feature-card h-100">
+              <div class="feature-card__icon"><i class="bi {{ feature.icon }}"></i></div>
+              <h3>{{ feature.title }}</h3>
+              <p>{{ feature.description }}</p>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-light" id="soluciones">
+    <div class="container">
+      <div class="row g-5 align-items-start">
+        <div class="col-12 col-lg-5">
+          <div class="section-heading">
+            <span class="eyebrow eyebrow-dark">Sección comercial</span>
+            <h2>Soluciones para negocios que necesitan abastecimiento confiable y lectura comercial del punto de venta.</h2>
+            <p>
+              Adaptamos la propuesta según formato de cliente, frecuencia de compra, volumen esperado y mix de categorías. AVESOL acompaña tanto operaciones de reposición continua como desarrollos de nuevas líneas congeladas.
+            </p>
+          </div>
+          <div class="market-list">
+            {% for segment in segments %}
+              <article class="market-list__item">
+                <i class="bi bi-arrow-up-right-circle"></i>
+                <div>
+                  <h3>{{ segment.title }}</h3>
+                  <p>{{ segment.description }}</p>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="col-12 col-lg-7">
+          <div class="solutions-panel">
+            <div class="solutions-panel__header">
+              <span class="panel-kicker">Modelo de trabajo comercial</span>
+              <h3>Armado de surtido, continuidad de stock y coordinación de entregas según necesidad de cada cuenta.</h3>
+            </div>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="solutions-panel__card">
+                  <span>Canal moderno</span>
+                  <p>Supermercados, autoservicios y cadenas de cercanía con foco en reposición, visibilidad y estabilidad de suministro.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="solutions-panel__card">
+                  <span>Distribución y mayoristas</span>
+                  <p>Desarrollo de cuentas con volumen, programación de entregas y líneas pensadas para rotación eficiente.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="solutions-panel__card">
+                  <span>Gastronomía</span>
+                  <p>Restaurantes, bares, hoteles y cocinas centralizadas que requieren practicidad, rendimiento y regularidad.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="solutions-panel__card">
+                  <span>Negocios especializados</span>
+                  <p>Rotiserías, granjas, freezers de barrio y comercios que buscan ampliar propuesta con productos confiables.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-cream" id="catalogo">
+    <div class="container">
+      <div class="section-heading section-heading--center narrow">
+        <span class="eyebrow eyebrow-dark">Destacados / catálogo</span>
+        <h2>Una vidriera preparada para crecer hacia un catálogo técnico y comercial más completo.</h2>
+      </div>
+      <div class="row g-4 mt-1">
+        {% for item in featured_products %}
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="featured-product-card h-100">
+              <div class="featured-product-card__media">
+                <img src="{% static item.image %}" alt="{{ item.alt }}" class="img-fluid" />
+              </div>
+              <div class="featured-product-card__body">
+                <span class="product-label">{{ item.category }}</span>
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.description }}</p>
+                <ul>
+                  {% for detail in item.details %}
+                    <li>{{ detail }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="catalog-cta">
+        <p>La estructura queda lista para incorporar fichas de producto, gramajes, presentaciones, marcas asociadas y descarga de PDF.</p>
+        <a class="btn btn-avesol-primary" href="#contacto">Solicitar catálogo completo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-light" id="logistica">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-12 col-lg-5">
+          <div class="section-heading">
+            <span class="eyebrow eyebrow-dark">Proceso y logística</span>
+            <h2>Cómo trabajamos para sostener abastecimiento, conservación y cumplimiento.</h2>
+            <p>
+              Organizamos la operación con criterios concretos: selección comercial, almacenamiento, control térmico, armado de pedido y distribución coordinada. Cada paso está pensado para proteger producto y servicio.
+            </p>
+          </div>
+          <img src="{% static 'images/avesol-distribution.svg' %}" alt="Flota de distribución y despacho de alimentos congelados hacia clientes comerciales" class="img-fluid rounded-4 shadow-sm border" />
+        </div>
+        <div class="col-12 col-lg-7">
+          <div class="timeline-grid">
+            {% for step in process_steps %}
+              <article class="timeline-card">
+                <span class="timeline-card__number">{{ forloop.counter|stringformat:'02d' }}</span>
+                <div>
+                  <h3>{{ step.title }}</h3>
+                  <p>{{ step.description }}</p>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark section-dark--compact" id="confianza">
+    <div class="container">
+      <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-5">
+          <div class="section-heading narrow">
+            <span class="eyebrow">Confianza comercial</span>
+            <h2>Un espacio listo para incorporar testimonios, logos o validaciones del mercado.</h2>
+            <p>Mientras se cargan referencias reales, la web ya puede comunicar el perfil de clientes y el tipo de vínculo comercial que AVESOL construye.</p>
+          </div>
+        </div>
+        <div class="col-12 col-lg-7">
+          <div class="trust-grid">
+            {% for quote in trust_quotes %}
+              <article class="trust-card">
+                <p>“{{ quote.quote }}”</p>
+                <strong>{{ quote.author }}</strong>
+                <span>{{ quote.role }}</span>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section final-cta-section">
+    <div class="container">
+      <div class="final-cta-card">
+        <div>
+          <span class="eyebrow eyebrow-dark">Impulsá tu abastecimiento</span>
+          <h2>Pedí catálogo, precios y una propuesta comercial adaptada a tu operación.</h2>
+          <p>
+            Si buscás una empresa con mirada comercial, capacidad de respuesta y foco en alimentos congelados, conversemos.
+            AVESOL está preparada para desarrollar relaciones de suministro serias y sostenibles.
+          </p>
+        </div>
+        <div class="d-flex flex-wrap gap-3">
+          <a class="btn btn-avesol-primary btn-lg" href="#contacto">Solicitar contacto comercial</a>
+          <a class="btn btn-avesol-secondary btn-lg" href="https://wa.me/5491130000000" target="_blank" rel="noopener noreferrer">Hablar por WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-light" id="contacto">
+    <div class="container">
+      <div class="row g-4 g-xl-5 align-items-start">
+        <div class="col-12 col-lg-5">
+          <div class="section-heading">
+            <span class="eyebrow eyebrow-dark">Contacto</span>
+            <h2>Hablemos de abastecimiento, precios y desarrollo comercial.</h2>
+            <p>
+              Completá el formulario y nuestro equipo comercial podrá responderte con una propuesta inicial, líneas disponibles o información para abrir una cuenta.
+            </p>
+          </div>
+          <div class="contact-data">
+            <article>
+              <span>WhatsApp comercial</span>
+              <a href="https://wa.me/5491130000000" target="_blank" rel="noopener noreferrer">+54 9 11 3000 0000</a>
+            </article>
+            <article>
+              <span>Email</span>
+              <a href="mailto:comercial@avesol.com.ar">comercial@avesol.com.ar</a>
+            </article>
+            <article>
+              <span>Atención</span>
+              <p>Lunes a viernes de 8 a 18 hs. Coordinación comercial y seguimiento de pedidos.</p>
+            </article>
+            <article>
+              <span>Ubicación</span>
+              <p>Área metropolitana de Buenos Aires · Cobertura adaptable según zona y volumen.</p>
+            </article>
+          </div>
+          <div class="map-placeholder" aria-label="Mapa ilustrativo de cobertura logística de AVESOL">
+            <div class="map-placeholder__badge">Cobertura comercial</div>
+            <p>Preparado para integrar Google Maps o un mapa logístico con zonas reales de entrega.</p>
+          </div>
+        </div>
+        <div class="col-12 col-lg-7">
+          <div class="contact-card">
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} mb-4" role="alert">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+            <form method="post" class="row g-3" novalidate>
+              {% csrf_token %}
+              <div class="col-md-6">
+                <label class="form-label" for="{{ form.company_name.id_for_label }}">Empresa</label>
+                {{ form.company_name }}
+                {% if form.company_name.errors %}<div class="text-danger small mt-1">{{ form.company_name.errors|join:', ' }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="{{ form.contact_name.id_for_label }}">Nombre y apellido</label>
+                {{ form.contact_name }}
+                {% if form.contact_name.errors %}<div class="text-danger small mt-1">{{ form.contact_name.errors|join:', ' }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors|join:', ' }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="{{ form.phone.id_for_label }}">Teléfono</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}<div class="text-danger small mt-1">{{ form.phone.errors|join:', ' }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="{{ form.business_type.id_for_label }}">Tipo de negocio</label>
+                {{ form.business_type }}
+                {% if form.business_type.errors %}<div class="text-danger small mt-1">{{ form.business_type.errors|join:', ' }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="{{ form.location.id_for_label }}">Localidad / zona</label>
+                {{ form.location }}
+                {% if form.location.errors %}<div class="text-danger small mt-1">{{ form.location.errors|join:', ' }}</div>{% endif %}
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="{{ form.interest.id_for_label }}">Interés principal</label>
+                {{ form.interest }}
+                {% if form.interest.errors %}<div class="text-danger small mt-1">{{ form.interest.errors|join:', ' }}</div>{% endif %}
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="{{ form.message.id_for_label }}">Mensaje</label>
+                {{ form.message }}
+                {% if form.message.errors %}<div class="text-danger small mt-1">{{ form.message.errors|join:', ' }}</div>{% endif %}
+              </div>
+              <div class="col-12 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 pt-2">
+                <p class="form-note mb-0">Al enviar este formulario, queda lista la base para integrar email, CRM o automatización comercial.</p>
+                <button class="btn btn-avesol-primary btn-lg" type="submit">Enviar consulta comercial</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-12 col-lg-4">
+        <a class="footer-brand" href="#inicio">AVESOL</a>
+        <p class="footer-copy">Comercialización y distribución de alimentos congelados para clientes que priorizan continuidad, calidad y respuesta comercial.</p>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <h3>Navegación</h3>
+        <ul>
+          <li><a href="#nosotros">Nosotros</a></li>
+          <li><a href="#productos">Productos</a></li>
+          <li><a href="#catalogo">Catálogo</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <h3>Canales</h3>
+        <ul>
+          <li><a href="mailto:comercial@avesol.com.ar">comercial@avesol.com.ar</a></li>
+          <li><a href="https://wa.me/5491130000000" target="_blank" rel="noopener noreferrer">WhatsApp comercial</a></li>
+          <li><a href="#soluciones">Soluciones para negocios</a></li>
+          <li><a href="#logistica">Proceso logístico</a></li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-4 col-lg-3">
+        <h3>Presencia</h3>
+        <ul>
+          <li>Distribución mayorista</li>
+          <li>Supermercados y comercios</li>
+          <li>Canal gastronómico</li>
+          <li>Desarrollo de cuentas B2B</li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <span>© {% now "Y" %} AVESOL. Todos los derechos reservados.</span>
+      <div class="d-flex gap-3">
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de AVESOL"><i class="bi bi-instagram"></i></a>
+        <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook de AVESOL"><i class="bi bi-facebook"></i></a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de AVESOL"><i class="bi bi-linkedin"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+{% endblock %}
